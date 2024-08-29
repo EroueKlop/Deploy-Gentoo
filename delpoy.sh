@@ -5,6 +5,8 @@ if [[ $answer = y ]] ; then
   sleep 2
   printf '\033c'
 fi
+
+
 echo "Configuring Network
 
 
@@ -15,10 +17,14 @@ read -p "
 
 Enter the name of your interface: " interface
 echo "$interface is your selected interface "
-read -p "proceed ? y/n " answer2
-# if[[$answer2 = y ]] ; then
-#     touch ./niga
-# fi
+read -p "proceed ?  "
+touch wpa_supplicant-$interface.conf
+echo "ctrl_interface=/run/wpa_supplicant
+update_config=1" >> wpa_supplicant-$interface.conf
+read -p "Enter you wifi name: " wifi
+read -p "Enter your password: " pass
+wpa_passphrase $wifi $pass >> wpa_supplicant-$interface.conf
+wpa_supplicant -B -i $interface -c wpa_supplicant-$interface.conf
 printf '\033c'
 echo "Configuring Disk
 
