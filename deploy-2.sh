@@ -1,10 +1,14 @@
 source /etc/profile
 export PS1="(chroot) ${PS1}"
-mkdir /efi
-echo "Assuming you have uefi support, if not stop now and modify the script"
-sleep 3
-# replace with (mount $bootpath /boot)
-mount $bootpath /efi
+
+read -p "UEFI [y/n]: " answer
+if [[ $answer = y ]] ; then
+    mkdir /efi  
+    mount $bootpath /efi
+else
+    mkdir /boot  
+    mount $bootpath /boot
+fi
 echo " Installing a Gentoo ebuild repository snapshot from the web"
 sleep 2
 emerge-webrsync
@@ -40,7 +44,7 @@ echo "check if selected profile is correct: $profile"
 sleep 2
 printf '\033c'
 echo "Not Adding a binary package host"
-sleep 2
+sleep 5
 echo "
 
 
@@ -53,10 +57,10 @@ echo "
 
 "
 echo "Configure your USE flags in make.conf"
-echo "VIDEO_CARDS=your graphics drivers    in your make.conf"
-sleep 3
-echo "Configure the ACCEPT_LICENSE variable in make.conf"
-echo "ACCEPT_LICENSE="*""> /etc/portage/make.conf
+read -p "Enter: VIDEO_CARDS=(your graphics drivers)" gdriver
+echo $gdriver > /etc/portage/make.conf
+echo "Configuring the ACCEPT_LICENSE variable in make.conf"
+echo "ACCEPT_LICENSE="*"" > /etc/portage/make.conf
 sleep 3
 nano /etc/portage/make.conf
 mkdir /etc/portage/package.license
@@ -138,7 +142,10 @@ echo 'Enter root password'
 passwd
 emerge --ask --verbose sys-boot/grub
 echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
-grub-install /dev/sda
+printf '/033c'
+lsblk
+read -p "enter full disk: " disk
+grub-install $disk
 grub-install --target=x86_64-efi --efi-directory=/efi
 grub-mkconfig -o /boot/grub/grub.cfg
 exit

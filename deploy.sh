@@ -80,7 +80,7 @@ sleep 4
 printf '\033c'
 echo "Download required tar ball"
 sleep 3
-links https://www.gentoo.org/downloads/mirrors/
+links https://www.gentoo.org/downloads/
 echo "
 
 
@@ -108,4 +108,7 @@ printf '\033c'
 echo "Chrooting Now"
 sleep 2
 mv ./deploy-2.sh /mnt/gentoo
+printf '\033c'
+printf 'Now execute deploy-2.sh'
+sleep 1
 chroot /mnt/gentoo /bin/bash
